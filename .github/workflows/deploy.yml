@@ -1,15 +1,48 @@
-name: Deploy to Fly.io
+name: Deploy to VPS
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy via tar pipe (atomic swap)
+        run: |
+          tar czf - \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.gitignore' \
+            --exclude='.DS_Store' \
+            --exclude='README.md' \
+            . | ssh -i ~/.ssh/deploy_key \
+                -o StrictHostKeyChecking=no \
+                ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+                "set -e
+                 DEPLOY=${{ secrets.DEPLOY_PATH_GALLERY }}
+                 TMP=\${DEPLOY}.deploying
+                 rm -rf \$TMP
+                 mkdir -p \$TMP
+                 tar xzf - -C \$TMP
+                 rm -rf \${DEPLOY}.old
+                 mv \$DEPLOY \${DEPLOY}.old
+                 mv \$TMP \$DEPLOY
+                 rm -rf \${DEPLOY}.old"
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
