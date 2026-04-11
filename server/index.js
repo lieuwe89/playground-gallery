@@ -22,7 +22,6 @@ app.use('/archie', createProxyMiddleware({
 app.use('/genealogy-viz', createProxyMiddleware({
   target: 'https://genealogy-viz.fly.dev',
   changeOrigin: true,
-  pathRewrite: { '^/genealogy-viz': '' },
   onProxyRes: (proxyRes) => {
     if (proxyRes.headers['location']) {
       proxyRes.headers['location'] = proxyRes.headers['location'].replace('https://genealogy-viz.fly.dev', '/genealogy-viz');
