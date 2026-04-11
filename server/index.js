@@ -11,19 +11,30 @@ const PORT = process.env.PORT || 4007;
 app.use('/archie', createProxyMiddleware({
   target: 'https://archie-chatbot.fly.dev',
   changeOrigin: true,
+  onProxyRes: (proxyRes) => {
+    if (proxyRes.headers['location']) {
+      proxyRes.headers['location'] = proxyRes.headers['location'].replace('https://archie-chatbot.fly.dev', '');
+    }
+  }
 }));
 
 // 2. Proxy Genealogy Visualiser
 app.use('/genealogy-viz', createProxyMiddleware({
   target: 'https://genealogy-viz.fly.dev',
   changeOrigin: true,
-  pathRewrite: { '^/genealogy-viz': '/' },
+  pathRewrite: { '^/genealogy-viz': '' },
+  onProxyRes: (proxyRes) => {
+    if (proxyRes.headers['location']) {
+      proxyRes.headers['location'] = proxyRes.headers['location'].replace('https://genealogy-viz.fly.dev', '/genealogy-viz');
+    }
+  }
 }));
 
 // 3. Local Gallery
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.get('*', (req, res) => {
+// Only catch-all if it doesn't look like an app path
+app.get(/^(?!\/archie|\/genealogy-viz).*$/, (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
