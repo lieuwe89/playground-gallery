@@ -1,6 +1,6 @@
 # Playground Gallery
 
-The central hub for Lieuw Jongsma's digital experiments and tools. 
+The central hub for Lieuwe Jongsma's digital experiments and tools. 
 Hosted at [playground.lieuwejongsma.nl](https://playground.lieuwejongsma.nl).
 
 ## Projects Included:
