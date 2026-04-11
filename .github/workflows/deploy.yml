@@ -1,0 +1,35 @@
+name: Deploy Gallery
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+      - name: Deploy
+        run: |
+          tar czf - . | ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
+            DEPLOY=${{ secrets.DEPLOY_PATH_GALLERY }}
+            TMP=\$DEPLOY.deploying
+            rm -rf \$TMP && mkdir -p \$TMP
+            tar xzf - -C \$TMP
+            cd \$TMP && npm install --production
+            [ -d \"\$DEPLOY\" ] && mv \$DEPLOY \$DEPLOY.old
+            mv \$TMP \$DEPLOY
+            cd \$DEPLOY && pm2 startOrRestart ecosystem.config.cjs
+            rm -rf \$DEPLOY.old
+          "
+
