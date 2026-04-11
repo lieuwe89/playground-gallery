@@ -1,18 +1,14 @@
 <?php
 /**
  * PHP reverse proxy for genealogy-viz.fly.dev
- * Handles all requests to /genealogy-viz/* and forwards them.
- * The app's JS uses relative paths (fetch('api/graph')), so when the
- * base href is /genealogy-viz/, browser resolves to /genealogy-viz/api/graph
- * which routes here and gets forwarded to genealogy-viz.fly.dev/api/graph.
+ * Forwards /genealogy-viz/* keeping the prefix, because the Express app
+ * serves all static files and API routes under /genealogy-viz/ on Fly.
  */
 
 $target = 'https://genealogy-viz.fly.dev';
 
-// Strip /genealogy-viz prefix from URI
+// Keep the full URI including /genealogy-viz/ prefix
 $uri = $_SERVER['REQUEST_URI'];
-$uri = preg_replace('#^/genealogy-viz#', '', $uri);
-if ($uri === '' || $uri === false) $uri = '/';
 
 $url = $target . $uri;
 
