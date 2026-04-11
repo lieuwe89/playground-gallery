@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 4007;
 // 1. Proxy Archie
 app.use('/archie', createProxyMiddleware({
   target: 'https://archie-chatbot.fly.dev',
-  changeOrigin: true,
+  changeOrigin: true, pathRewrite: { '^/archie': '' },
   onProxyRes: (proxyRes) => {
     if (proxyRes.headers['location']) {
       proxyRes.headers['location'] = proxyRes.headers['location'].replace('https://archie-chatbot.fly.dev', '');
@@ -21,7 +21,7 @@ app.use('/archie', createProxyMiddleware({
 // 2. Proxy Genealogy Visualiser
 app.use('/genealogy-viz', createProxyMiddleware({
   target: 'https://genealogy-viz.fly.dev',
-  changeOrigin: true,
+  changeOrigin: true, pathRewrite: { '^/archie': '' },
   onProxyRes: (proxyRes) => {
     if (proxyRes.headers['location']) {
       proxyRes.headers['location'] = proxyRes.headers['location'].replace('https://genealogy-viz.fly.dev', '/genealogy-viz');
