@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteBase /archie/
+# Route all requests (that aren't real files) through the PHP proxy
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]
