@@ -4,15 +4,62 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>playground — lieuwe jongsma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+  <noscript><style>
+    .boot-line, .banner, .tagline, .prompt-line,
+    .output-meta, .project-entry, .prompt-bottom { opacity: 1 !important; }
+  </style></noscript>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      /* Background */
+      --bg:           oklch(9% 0.007 200);
+      --bg-hover:     oklch(13.5% 0.010 200);
+
+      /* Text */
+      --text:         oklch(67% 0.045 142);
+      --text-meta:    oklch(62% 0.028 200);
+      --text-dim:     oklch(42% 0.015 200);
+
+      /* Accent — cyan */
+      --accent:       oklch(78% 0.140 200);
+      --accent-hi:    oklch(87% 0.100 200);
+      --accent-glow:  oklch(55% 0.120 200 / 0.32);
+
+      /* Prompt yellow */
+      --yellow:       oklch(83% 0.160 90);
+
+      /* Syntax */
+      --purple:       oklch(72% 0.150 298);
+      --perms-blue:   oklch(65% 0.130 240);
+      --ok-green:     oklch(68% 0.150 142);
+
+      /* Tags */
+      --tag-threejs:  oklch(72% 0.180 42);
+      --tag-nodejs:   oklch(73% 0.180 142);
+      --tag-gemini:   oklch(72% 0.160 308);
+
+      /* Spacing — 4pt scale */
+      --sp-1:  4px;
+      --sp-2:  8px;
+      --sp-3:  12px;
+      --sp-4:  16px;
+      --sp-6:  24px;
+      --sp-8:  32px;
+      --sp-12: 48px;
+      --sp-16: 64px;
+    }
+
     body {
-      font-family: 'Courier New', Courier, monospace;
-      background: #0d0d0d;
-      color: #9aae8e;
+      font-family: 'VT323', 'Courier New', monospace;
+      font-size: 1.125rem;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      padding: 2rem 1.5rem 4rem;
+      padding: var(--sp-12) var(--sp-6) var(--sp-16);
       line-height: 1.6;
     }
 
@@ -21,114 +68,142 @@
       margin: 0 auto;
     }
 
+    /* ─── Boot lines ─────────────────────────────── */
+
+    .boot-line {
+      font-size: 0.75rem;
+      line-height: 1.5;
+      color: var(--text-dim);
+      opacity: 0;
+    }
+
+    .boot-line .ok  { color: var(--ok-green); }
+    .boot-line .ver { color: var(--text-meta); }
+
+    /* ─── ASCII banner ───────────────────────────── */
+
     .banner {
-      color: #22d3ee;
+      color: var(--accent);
       white-space: pre;
-      font-size: clamp(0.45rem, 1.15vw, 0.78rem);
+      font-size: clamp(0.44rem, 1.15vw, 0.78rem);
       line-height: 1.15;
-      margin-bottom: 0.75rem;
+      margin-top: var(--sp-4);
+      margin-bottom: var(--sp-2);
       user-select: none;
       overflow-x: auto;
-      text-shadow: 0 0 18px #06b6d466;
+      text-shadow: 0 0 22px var(--accent-glow);
+      opacity: 0;
+      min-height: 6.9em; /* prevent layout shift during animation */
     }
+
+    /* ─── Tagline ────────────────────────────────── */
 
     .tagline {
-      color: #6b7280;
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
+      color: var(--text-meta);
+      font-size: 0.75rem;
+      margin-bottom: var(--sp-8);
+      opacity: 0;
     }
+
+    /* ─── Prompt ─────────────────────────────────── */
 
     .prompt-line {
-      margin: 2rem 0 0.25rem;
+      margin-bottom: var(--sp-1);
+      opacity: 0;
     }
 
-    .prompt-line::before {
-      content: '$ ';
-      color: #facc15;
-    }
-
-    .prompt-line .cmd {
-      color: #a78bfa;
-    }
+    .sym { color: var(--yellow); }
+    .cmd { color: var(--purple); }
 
     .output-meta {
-      color: #374151;
-      font-size: 0.85rem;
-      margin-bottom: 0.5rem;
+      color: var(--text-dim);
+      font-size: 0.8125rem;
+      margin-bottom: var(--sp-2);
+      opacity: 0;
     }
 
+    /* ─── Project entries ────────────────────────── */
+
     .projects {
-      margin-top: 0.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
     }
 
     .project-entry {
       display: block;
-      padding: 0.85rem 1rem;
-      margin: 0.5rem 0;
+      padding: var(--sp-4) var(--sp-4);
       text-decoration: none;
       color: inherit;
-      border-left: 2px solid #1e1e2e;
-      transition: border-color 0.1s ease, background 0.1s ease;
+      background: oklch(12.5% 0.009 200);
+      border: 1px solid oklch(30% 0.013 200);
+      transition: background 0.08s ease-out, border-color 0.08s ease-out;
+      opacity: 0;
     }
 
     .project-entry:hover {
-      border-left-color: #22d3ee;
-      background: #0d1117;
+      background: var(--bg-hover);
+      border-color: oklch(52% 0.090 200);
     }
 
     .project-entry:hover .project-name {
-      color: #67e8f9;
-      text-shadow: 0 0 12px #22d3ee88;
+      color: var(--accent-hi);
+      text-shadow: 0 0 16px var(--accent-glow);
     }
 
-    .ls-prefix {
-      color: #4b5563;
-      user-select: none;
+    .project-entry:hover .ls-perms {
+      color: var(--perms-blue);
     }
 
-    .ls-perms   { color: #3b82f6; }
-    .ls-owner   { color: #6b7280; }
+    .project-entry:focus-visible {
+      outline: 1px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .ls-perms {
+      color: var(--text-dim);
+      transition: color 0.08s ease-out;
+    }
 
     .project-name {
-      color: #22d3ee;
+      color: var(--accent);
+      transition: color 0.08s ease-out, text-shadow 0.08s ease-out;
     }
 
     .project-desc {
-      color: #6b7280;
-      font-size: 0.875rem;
-      margin-top: 0.3rem;
+      color: var(--text-meta);
+      margin-top: var(--sp-1);
       padding-left: 12ch;
+      max-width: 70ch;
+      line-height: 1.5;
     }
 
     .project-tags {
-      margin-top: 0.4rem;
+      margin-top: var(--sp-1);
       padding-left: 12ch;
     }
 
-    .tag {
-      font-size: 0.8rem;
-      padding: 0 0.1rem;
-    }
+    .tag::before { content: '['; color: var(--text-dim); }
+    .tag::after  { content: ']'; color: var(--text-dim); }
+    .tag + .tag  { margin-left: var(--sp-2); }
 
-    .tag::before { content: '['; color: #4b5563; }
-    .tag::after  { content: ']'; color: #4b5563; }
-    .tag + .tag  { margin-left: 0.5rem; }
+    .tag-threejs { color: var(--tag-threejs); }
+    .tag-nodejs  { color: var(--tag-nodejs); }
+    .tag-gemini  { color: var(--tag-gemini); }
 
-    /* per-tag colors */
-    .tag-threejs  { color: #f97316; }
-    .tag-nodejs   { color: #4ade80; }
-    .tag-gemini   { color: #c084fc; }
+    /* ─── Bottom prompt ──────────────────────────── */
 
     .prompt-bottom {
-      margin-top: 2.5rem;
-      color: #facc15;
+      margin-top: var(--sp-12);
+      color: var(--yellow);
+      opacity: 0;
     }
 
     .cursor {
       display: inline-block;
       width: 0.55em;
-      height: 1.1em;
-      background: #facc15;
+      height: 1.05em;
+      background: var(--yellow);
       vertical-align: text-bottom;
       margin-left: 1px;
       animation: blink 1.1s step-end infinite;
@@ -138,28 +213,56 @@
       0%, 100% { opacity: 1; }
       50%       { opacity: 0; }
     }
+
+    /* ─── Reduced motion ─────────────────────────── */
+
+    @media (prefers-reduced-motion: reduce) {
+      .boot-line, .banner, .tagline, .prompt-line,
+      .output-meta, .project-entry, .prompt-bottom {
+        opacity: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .cursor { animation: none; opacity: 1; }
+    }
+
+    /* ─── Mobile ─────────────────────────────────── */
+
+    @media (max-width: 520px) {
+      body {
+        padding: var(--sp-6) var(--sp-4) var(--sp-12);
+        font-size: 0.8125rem;
+      }
+      .project-desc,
+      .project-tags {
+        padding-left: 0;
+        margin-top: var(--sp-2);
+      }
+    }
   </style>
 </head>
 <body>
   <div class="terminal">
 
-    <pre class="banner"> _ __  _                                           _
+    <div class="boot-line" id="boot-1">[    0.000] <span class="ok">playground</span> v1.2.1 <span class="ver">booting</span></div>
+    <div class="boot-line" id="boot-2">[    0.018] <span class="ok">ok</span>  /projects mounted — <span class="ver">2 entries</span></div>
+
+    <pre class="banner" id="banner" aria-label="playground"> _ __  _                                           _
 | '_ \| | __ _ _   _  __ _ _ __ ___  _   _ _ __   __| |
 | |_) | |/ _` | | | |/ _` | '__/ _ \| | | | '_ \ / _` |
 |  __/| | (_| | |_| | (_| | | | (_) | |_| | | | | (_| |
 |_|   |_|\__,_|\__, |\__, |_|  \___/ \__,_|_| |_|\__,_|
                |___/ |___/                               </pre>
 
-    <div class="tagline"># experiments and tools — lieuwe jongsma</div>
+    <div class="tagline" id="tagline"># experiments and tools — lieuwe jongsma</div>
 
-    <div class="prompt-line"><span class="cmd">ls -la projects/</span></div>
-    <div class="output-meta">total 2</div>
+    <div class="prompt-line" id="prompt-1"><span class="sym">$</span> <span class="cmd">ls -la projects/</span></div>
+    <div class="output-meta" id="output-meta">total 2</div>
 
     <div class="projects">
 
       <a class="project-entry" href="/genealogy-viz/">
         <div>
-          <span class="ls-prefix">drwxr-xr-x  </span><span class="project-name">genealogy-viz/</span>
+          <span class="ls-perms">drwxr-xr-x</span>  <span class="project-name">genealogy-viz/</span>
         </div>
         <div class="project-desc">Interactive 3D force-directed network of ancestors and descendants, built from GEDCOM data.</div>
         <div class="project-tags">
@@ -170,9 +273,9 @@
 
       <a class="project-entry" href="/archie/">
         <div>
-          <span class="ls-prefix">drwxr-xr-x  </span><span class="project-name">archie/</span>
+          <span class="ls-perms">drwxr-xr-x</span>  <span class="project-name">archie/</span>
         </div>
-        <div class="project-desc">The archive chatbot for the Groninger Archieven. Finding ancestors, photos and collections with ease. [IN DEVELOPMENT, STILL VERY DUMB]</div>
+        <div class="project-desc">Archive chatbot for the Groninger Archieven. Finding ancestors, photos and collections with ease. [IN DEVELOPMENT, STILL VERY DUMB]</div>
         <div class="project-tags">
           <span class="tag tag-gemini">Gemini AI</span>
           <span class="tag tag-nodejs">Node.js</span>
@@ -181,8 +284,68 @@
 
     </div>
 
-    <div class="prompt-bottom">$ <span class="cursor"></span></div>
+    <div class="prompt-bottom" id="prompt-bottom"><span class="sym">$</span> <span class="cursor"></span></div>
 
   </div>
+
+  <script>
+    (function () {
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var bannerEl = document.getElementById('banner');
+      var BANNER_TEXT = bannerEl.textContent;
+
+      if (reduced) {
+        document.querySelectorAll(
+          '.boot-line, .banner, .tagline, .prompt-line, .output-meta, .project-entry, .prompt-bottom'
+        ).forEach(function (el) { el.style.opacity = '1'; });
+        return;
+      }
+
+      bannerEl.textContent = '';
+
+      function show(id, ms) {
+        setTimeout(function () {
+          var el = document.getElementById(id);
+          if (!el) return;
+          el.style.transition = 'opacity 80ms cubic-bezier(0.16, 1, 0.3, 1)';
+          el.style.opacity = '1';
+        }, ms);
+      }
+
+      function showEl(el, ms) {
+        setTimeout(function () {
+          el.style.transition = 'opacity 80ms cubic-bezier(0.16, 1, 0.3, 1)';
+          el.style.opacity = '1';
+        }, ms);
+      }
+
+      function animateBanner(el, text, startMs, durationMs) {
+        setTimeout(function () {
+          el.style.opacity = '1';
+          var len = text.length;
+          var t0 = performance.now();
+          (function frame(now) {
+            var p = Math.min((now - t0) / durationMs, 1);
+            el.textContent = text.slice(0, Math.floor(p * len));
+            if (p < 1) { requestAnimationFrame(frame); }
+            else { el.textContent = text; }
+          }(performance.now()));
+        }, startMs);
+      }
+
+      document.fonts.ready.then(function () {
+        show('boot-1',       60);
+        show('boot-2',      190);
+        animateBanner(bannerEl, BANNER_TEXT, 350, 480);
+        show('tagline',     850);
+        show('prompt-1',    950);
+        show('output-meta', 1000);
+        document.querySelectorAll('.project-entry').forEach(function (e, i) {
+          showEl(e, 1090 + i * 120);
+        });
+        show('prompt-bottom', 1350);
+      });
+    }());
+  </script>
 </body>
 </html>
